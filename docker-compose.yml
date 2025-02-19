@@ -1,0 +1,33 @@
+services:
+  web:
+    build: .
+    container_name: referral_system_tz
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: poetry run python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    env_file:
+      - .env
+    volumes:
+      # - pgdata:/var/lib/postgresql/data  # Монтирование тома для сохранения данных базы на хосте.
+      - type: bind
+        source: ~/docker_data/postgres  # Путь на хосте (пуеть в домашнем каталоге ~/docker_data/postgres)
+        target: /var/lib/postgresql/data  # Монтируемый путь внутри контейнера
+        bind:
+          create_host_path: true
+
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]  # Проверка готовности PostgreSQL к работе.
+      interval: 5s  # Интервал между проверками (5 секунд).
+      timeout: 5s  # Время ожидания ответа от команды проверки.
+      retries: 5  # Количество попыток перед переключением статуса на "неисправен".
+    restart: always  # Автоматический перезапуск контейнера, если он завершится с ошибкой.
+
+volumes:
+  postgres_data:

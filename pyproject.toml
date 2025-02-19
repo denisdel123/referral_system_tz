@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "referral-system-tz"
+version = "0.1.0"
+description = ""
+authors = ["denisbelenko <denisdel123@>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.1.6"
+psycopg2 = "^2.9.10"
+pillow = "^11.1.0"
+ipython = "^8.32.0"
+djangorestframework = "^3.15.2"
+python-dotenv = "^1.0.1"
+drf-spectacular = "^0.28.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
