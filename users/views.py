@@ -17,6 +17,10 @@ class RegistrationUsers(generics.CreateAPIView):
     queryset = users_models.User.objects.all()
 
 
+@extend_schema(
+    summary="Профиль пользователей.",
+    description="При передачи id пользователя можно посмотреть все информацию об этом пользователе",
+)
 class RetrieveUsers(generics.RetrieveAPIView):
     queryset = users_models.User.objects.all()
     serializer_class = users_serializers.RetrieveUsersSerializer
@@ -36,6 +40,10 @@ class CreateReferralCode(generics.CreateAPIView):
         serializer.save(owner=self.request.user)
 
 
+@extend_schema(
+    summary="Удаление реферального кода.",
+    description="Реферальный код автоматически удаляется при использовании.",
+)
 class DestroyReferralCode(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -53,6 +61,10 @@ class DestroyReferralCode(generics.DestroyAPIView):
         return Response({"message": "Реферальный код удален"}, status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(
+    summary="Получить реферальный код по email.",
+    description="При вводе email пользователя существующего в базе, приходит его реферальный код если он есть.",
+)
 class GetReferralCodeByEmailView(APIView):
     serializer_class = users_serializers.GetReferralCodeSerializer  # Добавляем это
 
