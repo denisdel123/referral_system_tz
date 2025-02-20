@@ -187,10 +187,10 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_TIMEZONE = "Europe/Moscow"
 
 # Настройка почты
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "your-email@gmail.com"  # Твой email
-EMAIL_HOST_PASSWORD = "your-password"  # Пароль или App Password (если включена двухфакторная аутентификация)
+EMAIL_BACKEND = constants.EMAIL_BACKEND
+EMAIL_HOST = constants.EMAIL_HOST
+EMAIL_PORT = constants.EMAIL_PORT
+EMAIL_USE_TLS = constants.EMAIL_USE_TLS
+EMAIL_HOST_USER = constants.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = constants.EMAIL_HOST_PASSWORD
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
