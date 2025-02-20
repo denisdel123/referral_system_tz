@@ -47,6 +47,23 @@ class RegistrationUsersSerializer(serializers.ModelSerializer):
         return user
 
 
+class RetrieveUsersSerializer(serializers.ModelSerializer):
+    referrals = serializers.SerializerMethodField()
+
+    referral_code = serializers.SerializerMethodField()
+
+    class Meta:
+        model = users_models.User
+        fields = ["referrals", 'email', "referral_code", "invited_by", "registration_at"]
+
+    def get_referrals(self, obj):
+        return [user.email for user in obj.users.all()]
+
+    def get_referral_code(self, obj):
+        if obj.referral_code:
+            return obj.referral_code.name
+
+
 class CreateReferralCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = users_models.ReferralCode
