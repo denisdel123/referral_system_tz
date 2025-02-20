@@ -53,6 +53,16 @@ python manage.py migrate
 ```
 
 ```
+запускаем redis:
+redis-server
+```
+
+```
+запускаем celery для асинхроных задач:
+celery -A config worker --loglevel=info
+```
+
+```
 запустить с помощью docker:
 docker compose up --build
 ```
