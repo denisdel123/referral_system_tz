@@ -33,18 +33,17 @@ class RegistrationUsersSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        email = validated_data["email"]
+        password = validated_data["password1"]
         invited_by_code = validated_data.pop("invited_by", None)
-        invited_by = None
-        if invited_by_code:
-            invited_by = users_models.User.objects.filter(
-                referral_code__name=invited_by_code
-            ).first()
-        user = users_models.User.objects.create_user(
-            email=validated_data["email"],
-            password=validated_data["password1"],
-            invited_by=invited_by
-        )
-        return user
+
+        # 1. Асинхронно ищем пригласившего пользователя
+        invited_by_id = users_tasks.get_invited_by.delay(invited_by_code).get() if invited_by_code else None
+
+        # 2. Асинхронно создаем пользователя
+        user_id = users_tasks.create_user_task.delay(email, password, invited_by_id).get()
+
+        return users_models.User.objects.get(id=user_id)
 
 
 class RetrieveUsersSerializer(serializers.ModelSerializer):
