@@ -9,6 +9,7 @@ urlpatterns = [
     path('registration/', users_views.RegistrationUsers.as_view(), name='registration'),
     path('create-referral', users_views.CreateReferralCode.as_view(), name='create_referral'),
     path('profile/<id>', users_views.RetrieveUsers.as_view(), name='create_referral'),
+    path('send-email/', users_views.GetReferralCodeByEmailView.as_view(), name='send-email'),
 
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
