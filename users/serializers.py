@@ -92,3 +92,7 @@ class CreateReferralCodeSerializer(serializers.ModelSerializer):
         user.save()
 
         return create_referral
+
+
+class GetReferralCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
