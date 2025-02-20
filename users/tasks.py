@@ -1,4 +1,7 @@
 from celery import shared_task
+from django.core.mail import send_mail
+
+from config import settings
 from . import models as users_models
 
 
@@ -20,3 +23,15 @@ def create_user_task(email, password, invited_by_code):
         invited_by=invited_by
     )
     return user.id
+
+
+@shared_task
+def send_welcome_email(email_to, code, email_from=None):
+    email_from = email_from or settings.DEFAULT_FROM_EMAIL
+    send_mail(
+        "Реферальный код!",
+        f"Здравствуйте! Ваш реферальный код: {code}",
+        from_email=email_from,
+        recipient_list=[email_to],
+        fail_silently=False,
+    )
