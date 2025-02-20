@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from core import constants
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'users',
+    'rest_framework_simplejwt',
 
 ]
 
@@ -140,13 +142,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # настройка JWT-token
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API Реферальной системы",
     "DESCRIPTION": "позволяет регистрироваться с помощью рефералов а так же отправлять письма на почту пользователя",
     "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False, # Не включаем схему внутрь документации
+    "SERVE_INCLUDE_SCHEMA": False,  # Не включаем схему внутрь документации
     "SWAGGER_UI_SETTINGS": {
         "persistAuthorization": True,  # Сохраняет авторизацию после обновления страницы
     },
@@ -154,3 +160,18 @@ SPECTACULAR_SETTINGS = {
 
 # Настройка пользователя
 AUTH_USER_MODEL = "users.User"
+
+# JWT-token
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Время жизни access-токена
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Время жизни refresh-токена
+    'ROTATE_REFRESH_TOKENS': True,  # Обновлять refresh-токен при каждом обновлении access-токена
+    'BLACKLIST_AFTER_ROTATION': True,  # Деактивировать старый refresh-токен после обновления
+    'ALGORITHM': 'HS256',  # Алгоритм шифрования
+    'SIGNING_KEY': 'your-secret-key',  # Ключ подписи (лучше загружать из переменных окружения)
+}
+
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
