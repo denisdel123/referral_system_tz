@@ -17,6 +17,7 @@ drf-spectacular = "^0.28.0"
 djangorestframework-simplejwt = "^5.4.0"
 celery = "^5.4.0"
 django-celery-beat = "^2.7.0"
+redis = "^5.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
