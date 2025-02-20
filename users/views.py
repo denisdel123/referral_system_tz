@@ -13,6 +13,11 @@ class RegistrationUsers(generics.CreateAPIView):
     queryset = users_models.User.objects.all()
 
 
+class RetrieveUsers(generics.RetrieveAPIView):
+    queryset = users_models.User.objects.all()
+    serializer_class = users_serializers.RetrieveUsersSerializer
+    lookup_field = "id"
+
 
 @extend_schema(
     summary="Создание реферального кода.",
