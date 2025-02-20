@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'users',
     'rest_framework_simplejwt',
+    'django_celery_beat',
 
 ]
 
@@ -171,7 +172,8 @@ SIMPLE_JWT = {
     'SIGNING_KEY': 'your-secret-key',  # Ключ подписи (лучше загружать из переменных окружения)
 }
 
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_TIMEZONE = "UTC"
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TIMEZONE = "Europe/Moscow"
