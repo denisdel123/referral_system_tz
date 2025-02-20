@@ -36,6 +36,23 @@ class CreateReferralCode(generics.CreateAPIView):
         serializer.save(owner=self.request.user)
 
 
+class DestroyReferralCode(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+
+        if not user.referral_code:
+            return Response({"error": "У вас нет реферального кода"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Удаляем код
+        user.referral_code.delete()
+        user.referral_code = None
+        user.save()
+
+        return Response({"message": "Реферальный код удален"}, status=status.HTTP_204_NO_CONTENT)
+
+
 class GetReferralCodeByEmailView(APIView):
     serializer_class = users_serializers.GetReferralCodeSerializer  # Добавляем это
 
