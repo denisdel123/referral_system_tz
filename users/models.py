@@ -44,7 +44,8 @@ class User(AbstractBaseUser):
         ReferralCode,
         on_delete=models.CASCADE,
         **constants.NULLABLE,
-        verbose_name='Реферальный код'
+        verbose_name='Реферальный код',
+        related_name='owner'
     )
     invited_by = models.ForeignKey(
         'self',
