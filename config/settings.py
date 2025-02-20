@@ -142,10 +142,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # настройка JWT-token
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
@@ -155,8 +154,16 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,  # Не включаем схему внутрь документации
     "SWAGGER_UI_SETTINGS": {
-        "persistAuthorization": True,  # Сохраняет авторизацию после обновления страницы
+        "persistAuthorization": True,
     },
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    },
+    "SECURITY": [{"Bearer": []}],
 }
 
 # Настройка пользователя
@@ -171,6 +178,7 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',  # Алгоритм шифрования
     'SIGNING_KEY': 'your-secret-key',  # Ключ подписи (лучше загружать из переменных окружения)
 }
+
 
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
