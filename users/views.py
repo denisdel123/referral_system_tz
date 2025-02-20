@@ -1,7 +1,11 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from . import serializers as users_serializers
 from . import models as users_models
+from . import tasks as users_tasks
 
 
 @extend_schema(
@@ -30,3 +34,26 @@ class CreateReferralCode(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class GetReferralCodeByEmailView(APIView):
+    serializer_class = users_serializers.GetReferralCodeSerializer  # Добавляем это
+
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = users_serializers.GetReferralCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data["email"]
+
+            try:
+                user = users_models.User.objects.get(email=email)
+            except users_models.User.DoesNotExist:
+                return Response({"error": "Пользователь не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not user.referral_code:
+                return Response({"error": "У пользователя нет реферального кода"}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({"referral_code": user.referral_code.name}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
