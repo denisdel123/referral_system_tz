@@ -1,5 +1,9 @@
+version: '3.8'
+
 services:
   web:
+    ports:
+      - "8000:8000"
     build: .
     container_name: referral_system_tz
     volumes:
@@ -8,26 +12,45 @@ services:
       - .env
     command: poetry run python manage.py runserver 0.0.0.0:8000
     depends_on:
+      - redis
       - db
 
   db:
     image: postgres:16
+    container_name: postgres_db
     env_file:
       - .env
     volumes:
-      # - pgdata:/var/lib/postgresql/data  # Монтирование тома для сохранения данных базы на хосте.
       - type: bind
-        source: ~/docker_data/postgres  # Путь на хосте (пуеть в домашнем каталоге ~/docker_data/postgres)
-        target: /var/lib/postgresql/data  # Монтируемый путь внутри контейнера
+        source: /Users/denisbelenko/docker_data/postgres
+        target: /var/lib/postgresql/data
         bind:
           create_host_path: true
-
     healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]  # Проверка готовности PostgreSQL к работе.
-      interval: 5s  # Интервал между проверками (5 секунд).
-      timeout: 5s  # Время ожидания ответа от команды проверки.
-      retries: 5  # Количество попыток перед переключением статуса на "неисправен".
-    restart: always  # Автоматический перезапуск контейнера, если он завершится с ошибкой.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: poetry run celery -A config worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - web
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
 volumes:
   postgres_data:

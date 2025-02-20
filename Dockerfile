@@ -20,5 +20,6 @@ COPY . .
 # Устанавливаем зависимости через Poetry
 RUN poetry install --no-root
 
+SHELL ["/bin/bash", "-c"]
 # Запуск сервера Django
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
